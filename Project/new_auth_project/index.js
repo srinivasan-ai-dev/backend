@@ -46,8 +46,6 @@ app.post("/register", async (req, res) => {
         }
 
 
-
-
         //Hashing Password:
         const hashedPassword = await bcrypt.hash(new_data.password, 10);
 
@@ -111,3 +109,29 @@ app.post("/login", async (req, res) => {
     }
 
 });
+
+
+// Refresh
+app.post("/refresh", (req, res) => {
+    try {
+        // Data from Frontend
+        const data = req.body;
+
+        // DB logic
+        jwt.verify(data.main_key, "main_key_secret_code", (err, decoded) => {
+            if (!err) {
+                const temp_key = jwt.sign({ user_id: decoded.user_id, email: decoded.email }, "temp_key_secret_code", { expiresIn: "20s" });
+                res.status(200).json({ message: "New temp key generated", tokens: temp_key });
+            } else {
+                res.status(401).json({ message: "Invalid main key. Login again" })
+            }
+        }
+        )
+        // Data to front end
+
+    } catch (err) {
+        console.log("INTERNAL SERVER ERROR", err);
+        res.status(500).json({ message: "INTERNAL SERVER ERROR", error: err.message });
+
+    }
+})
