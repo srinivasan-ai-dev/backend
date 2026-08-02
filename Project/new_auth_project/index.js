@@ -13,10 +13,11 @@ const jwt = require('jsonwebtoken');
 const app = express();
 const prisma = new PrismaClient();
 
+// MIDDLEWARE
 app.use(express.json());
 
 
-
+// PORT
 const PORT = 8000;
 
 app.listen(PORT, () => {
@@ -71,7 +72,7 @@ app.post("/register", async (req, res) => {
 
 });
 
-// Login
+// Login -> generates a main_key, temp_key
 app.post("/login", async (req, res) => {
     try {
         //Data from frontend 
@@ -111,7 +112,11 @@ app.post("/login", async (req, res) => {
 });
 
 
-// Refresh
+// Refresh -> 
+// 1. If temp_key got expired, main_key is used to create a new temp_key. If main_key is also expired -> Logout.
+// 2. main_key is decoded in line 123, from which we get user_id and email.
+// 3. Then a new temp_key is generated using the user_id and email.
+
 app.post("/refresh", (req, res) => {
     try {
         // Data from Frontend
@@ -134,4 +139,4 @@ app.post("/refresh", (req, res) => {
         res.status(500).json({ message: "INTERNAL SERVER ERROR", error: err.message });
 
     }
-})
+});
