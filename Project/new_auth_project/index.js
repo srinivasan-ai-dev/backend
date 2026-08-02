@@ -1,4 +1,4 @@
-//API PLANN  ING
+//API PLANNING
 
 // Register : POST -> /register  -> Adding new user
 // Login : POST -> /login  -> Email, pass
